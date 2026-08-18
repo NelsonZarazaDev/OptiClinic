@@ -58,7 +58,7 @@ CREATE TABLE clinical_template_version (
 
 CREATE TABLE clinical_encounters (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    company_id UUID NOT NULL,
+    company_id UUID,
     branch_id UUID,
     patient_company_id UUID NOT NULL,
     professional_id UUID NOT NULL,

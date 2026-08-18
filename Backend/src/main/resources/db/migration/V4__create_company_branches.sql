@@ -42,7 +42,7 @@ CREATE INDEX idx_company_identification_number ON company(identification_number)
 CREATE TABLE branches(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     address VARCHAR(50) NOT NULL,
     logo VARCHAR(500),
@@ -52,6 +52,11 @@ CREATE TABLE branches(
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ,
     deleted_at TIMESTAMPTZ,
+
+    CONSTRAINT UQ_BRANCHES_NAME UNIQUE (name),
+    CONSTRAINT UQ_BRANCHES_EMAIL UNIQUE (email),
+    CONSTRAINT UQ_BRANCHES_PHONE UNIQUE (phone),
+
 
     CONSTRAINT FK_BRANCHES_CITY_ID
         FOREIGN KEY (city_id)

@@ -4,9 +4,9 @@ CREATE TABLE person(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     first_name VARCHAR(100) NOT NULL,
     first_surname VARCHAR(100) NOT NULL,
-    identification_type UUID,
+    identification_type_id UUID,
     identification_number VARCHAR(50),
-    birth_date TIMESTAMPTZ NOT NULL,
+    birth_date DATE NOT NULL,
     biological_sex VARCHAR(20) NOT NULL,
     gender_identity VARCHAR(50) NOT NULL,
     email VARCHAR(254),
@@ -18,6 +18,11 @@ CREATE TABLE person(
     status_id UUID NOT NULL,
     CONSTRAINT CHK_PERSON_BLOOD_TYPE CHECK (blood_type IN ('O-','O+','A-','A+','B-','B+','AB-','AB+')),
 
+    CONSTRAINT UQ_PERSON_IDENTIFICATION_NUMBER UNIQUE (identification_number),
+    CONSTRAINT UQ_PERSON_EMAIL UNIQUE (email),
+    CONSTRAINT UQ_PERSON_PHONE UNIQUE (phone),
+
+
     CONSTRAINT FK_PERSON_STATUS_ID FOREIGN KEY (status_id)
         REFERENCES status_person(id)
         ON DELETE RESTRICT
@@ -26,7 +31,7 @@ CREATE TABLE person(
 CREATE INDEX idx_person_email ON person(email);
 CREATE INDEX idx_person_birth_date ON person(birth_date);
 CREATE INDEX idx_person_identification_number ON person(identification_number);
-CREATE INDEX idx_person_identification_number_identification_type ON person(identification_number,identification_type);
+CREATE INDEX idx_person_identification_number_identification_type_id ON person(identification_number,identification_type_id);
 
 
 CREATE TABLE users(
@@ -51,5 +56,14 @@ CREATE INDEX idx_users_person_id_is_active ON users(person_id,is_active);
 
 CREATE TABLE patients(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    person_id UUID NOT NULL
+    person_id UUID NOT NULL,
+    company_id UUID,
+    branch_id UUID,
+
+    CONSTRAINT chk_patients_owner
+        CHECK (num_nonnulls(company_id, branch_id) = 1),
+
+    CONSTRAINT FK_PATIENTS_PERSON_ID FOREIGN KEY (person_id)
+        REFERENCES person(id)
+        ON DELETE RESTRICT
 )
